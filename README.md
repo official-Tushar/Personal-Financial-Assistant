@@ -12,7 +12,7 @@ Personal Financial Agent is a lightweight MERN application to track income and e
 ## Table of Contents
 - [Core Idea](#core-idea)
 - [Tech Stack](#tech-stack)
-- [Live Demo](#live-demo)
+- [Demo Video](#demo-video)
 - [Features Implemented](#features-implemented)
 - [Screenshots](#screenshots)
 - [Installation and Usage](#installation-and-usage)
@@ -42,8 +42,8 @@ Personal Financial Agent is a lightweight MERN application to track income and e
   - Azure AI Document Intelligence (receipt parsing)
   - CORS, dotenv, validator
 
-## Live Demo
-- Yet to be deployed
+## Demo Video
+- Youtube Link: https://youtu.be/8rod3BCRZYA
 
 ## Features Implemented
 - Authentication:
