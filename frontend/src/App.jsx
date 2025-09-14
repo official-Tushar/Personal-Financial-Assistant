@@ -1,5 +1,8 @@
 import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { me } from './services/auth';
+import { setUser, setInitialized } from './store/slices/authSlice';
 import Home from './pages/Home.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
@@ -7,6 +10,7 @@ import DashboardPage from './pages/DashboardPage.jsx';
 
 function Navbar() {
   const user = useSelector((s) => s.auth.user);
+  const initialized = useSelector((s) => s.auth.initialized);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -37,7 +41,7 @@ function Navbar() {
           </div>
         </div>
         <div className="flex gap-3">
-          {!user ? (
+          {!initialized ? null : !user ? (
             <>
               <Link to="/login" className="btn btn-outline btn-sm">Login</Link>
               <Link to="/register" className="btn btn-primary btn-sm">Register</Link>
@@ -52,6 +56,25 @@ function Navbar() {
 }
 
 export default function App() {
+  const dispatch = useDispatch();
+
+  // Initialize auth state on app load so cookie sessions reflect in UI
+  useEffect(() => {
+    let ignore = false;
+    (async () => {
+      try {
+        const u = await me();
+        if (!ignore) dispatch(setUser(u));
+      } catch {
+        // 401 means not logged in; just proceed
+      } finally {
+        if (!ignore) dispatch(setInitialized(true));
+      }
+    })();
+    return () => {
+      ignore = true;
+    };
+  }, [dispatch]);
   return (
     <div className="min-h-screen bg-base-200">
       <Navbar />

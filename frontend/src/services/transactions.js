@@ -19,3 +19,9 @@ export async function updateTransaction(id, payload) {
 export async function deleteTransaction(id) {
   await api.delete(`/api/transactions/${id}`);
 }
+
+export async function createTransactionsBulk(items) {
+  const { data } = await api.post('/api/transactions/bulk', { transactions: items });
+  // Be defensive in case backend returns no body for some reason
+  return data || { createdCount: 0, failedCount: 0, created: [], failed: [] };
+}

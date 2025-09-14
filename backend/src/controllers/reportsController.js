@@ -1,5 +1,18 @@
 import mongoose from 'mongoose';
 import { Transaction } from '../models/Transaction.js';
+import { canonicalizeCategory } from '../utils/validators.js';
+
+function decodeHtml(str) {
+  if (typeof str !== 'string') return str;
+  const map = { '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'" };
+  let out = str;
+  for (let i = 0; i < 3; i++) {
+    const prev = out;
+    out = out.replace(/&(amp|lt|gt|quot|#39);/g, (m) => map[m] || m);
+    if (out === prev) break;
+  }
+  return out;
+}
 
 function buildDateMatch(start, end) {
   const match = {};
@@ -43,12 +56,42 @@ export async function byCategory(req, res, next) {
 
     const result = await Transaction.aggregate([
       { $match: match },
-      { $group: { _id: '$category', total: { $sum: '$amount' } } },
+      {
+        $addFields: {
+          categoryNorm: {
+            $let: {
+              vars: { idx: { $indexOfBytes: ['$category', '('] } },
+              in: {
+                $trim: {
+                  input: {
+                    $cond: [
+                      { $gte: ['$$idx', 0] },
+                      { $substrBytes: ['$category', 0, '$$idx'] },
+                      '$category',
+                    ],
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      { $group: { _id: '$categoryNorm', total: { $sum: '$amount' } } },
       { $project: { _id: 0, category: '$_id', total: 1 } },
       { $sort: { total: -1 } },
     ]);
 
-    return res.json({ categories: result });
+    // Merge categories that differ only by HTML-entity encoding
+    const mergedMap = new Map();
+    for (const row of result) {
+      const key = canonicalizeCategory(decodeHtml(row.category));
+      mergedMap.set(key, (mergedMap.get(key) || 0) + row.total);
+    }
+    const merged = Array.from(mergedMap, ([category, total]) => ({ category, total })).sort(
+      (a, b) => b.total - a.total
+    );
+
+    return res.json({ categories: merged });
   } catch (err) {
     next(err);
   }
@@ -68,6 +111,22 @@ export async function timeline(req, res, next) {
       {
         $addFields: {
           dateStr: { $dateToString: { format, date: '$date' } },
+          categoryNorm: {
+            $let: {
+              vars: { idx: { $indexOfBytes: ['$category', '('] } },
+              in: {
+                $trim: {
+                  input: {
+                    $cond: [
+                      { $gte: ['$$idx', 0] },
+                      { $substrBytes: ['$category', 0, '$$idx'] },
+                      '$category',
+                    ],
+                  },
+                },
+              },
+            },
+          },
         },
       },
       {
@@ -80,7 +139,7 @@ export async function timeline(req, res, next) {
           ],
           expenses: [
             { $match: { type: 'expense' } },
-            { $group: { _id: { date: '$dateStr', category: '$category' }, total: { $sum: '$amount' } } },
+            { $group: { _id: { date: '$dateStr', category: '$categoryNorm' }, total: { $sum: '$amount' } } },
             { $project: { _id: 0, date: '$_id.date', category: '$_id.category', total: 1 } },
             { $sort: { date: 1 } },
           ],
@@ -96,7 +155,8 @@ export async function timeline(req, res, next) {
     }
     for (const row of expenses) {
       const obj = map.get(row.date) || { date: row.date };
-      obj[row.category] = (obj[row.category] || 0) + row.total;
+      const key = canonicalizeCategory(decodeHtml(row.category));
+      obj[key] = (obj[key] || 0) + row.total;
       map.set(row.date, obj);
     }
 

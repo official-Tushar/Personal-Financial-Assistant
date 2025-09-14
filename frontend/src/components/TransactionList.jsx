@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { listTransactions, updateTransaction, deleteTransaction } from '../services/transactions';
 import { nextPage, prevPage, resetPagination } from '../store/slices/transactionsSlice';
+import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '../constants/categories';
 
 export default function TransactionList({ start, end, refreshToken }) {
   const dispatch = useDispatch();
@@ -108,6 +109,8 @@ export default function TransactionList({ start, end, refreshToken }) {
     }
   };
 
+  const allowedEditCategories = editForm.type === 'expense' ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
+
   return (
     <div className="overflow-x-auto">
       <table className="table">
@@ -162,7 +165,12 @@ export default function TransactionList({ start, end, refreshToken }) {
                 </div>
                 <div className="form-control md:col-span-2">
                   <label className="label">Category</label>
-                  <input name="category" className="input input-bordered" required value={editForm.category} onChange={handleEditChange} />
+                  <select name="category" className="select select-bordered" required value={editForm.category} onChange={handleEditChange}>
+                    <option value="" disabled>Select a category</option>
+                    {allowedEditCategories.map((c) => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
                 </div>
                 <div className="form-control md:col-span-2">
                   <label className="label">Amount</label>
