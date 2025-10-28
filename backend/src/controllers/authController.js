@@ -65,7 +65,7 @@ export async function logout(req, res, next) {
     const isSecure = String(process.env.COOKIE_SECURE).toLowerCase() === 'true' || process.env.NODE_ENV === 'production';
     res.cookie('token', '', {
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: 'None',
       secure: isSecure,
       expires: new Date(0),
     });
