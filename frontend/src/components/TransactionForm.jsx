@@ -128,19 +128,19 @@ export default function TransactionForm({ onCreated }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end">
+    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-6 gap-2 xs:gap-3 sm:gap-4 items-end">
       <div className="form-control md:col-span-1">
-        <label className="label">Type</label>
-        <select name="type" className="select select-bordered" value={form.type} onChange={handleChange}>
+        <label className="label text-xs xs:text-sm">Type</label>
+        <select name="type" className="select select-bordered select-xs xs:select-sm text-xs xs:text-sm" value={form.type} onChange={handleChange}>
           <option value="income">Income</option>
           <option value="expense">Expense</option>
         </select>
       </div>
       <div className="form-control md:col-span-2">
-        <label className="label">Category</label>
+        <label className="label text-xs xs:text-sm">Category</label>
         <select
           name="category"
-          className={`select select-bordered ${pendingCategoryFromReceipt && !form.category ? 'select-warning' : ''}`}
+          className={`select select-bordered select-xs xs:select-sm text-xs xs:text-sm ${pendingCategoryFromReceipt && !form.category ? 'select-warning' : ''}`}
           required
           value={form.category}
           onChange={handleChange}
@@ -152,15 +152,15 @@ export default function TransactionForm({ onCreated }) {
         </select>
       </div>
       <div className="form-control md:col-span-1">
-        <label className="label">Amount</label>
-        <input name="amount" type="number" min="0" step="0.01" className="input input-bordered" required value={form.amount} onChange={handleChange} />
+        <label className="label text-xs xs:text-sm">Amount</label>
+        <input name="amount" type="number" min="0" step="0.01" className="input input-bordered input-xs xs:input-sm text-xs xs:text-sm" required value={form.amount} onChange={handleChange} />
       </div>
       <div className="form-control md:col-span-1">
-        <label className="label">Date</label>
+        <label className="label text-xs xs:text-sm">Date</label>
         <input
           name="date"
           type="date"
-          className="input input-bordered"
+          className="input input-bordered input-xs xs:input-sm text-xs xs:text-sm"
           required
           max={new Date().toISOString().slice(0, 10)}
           value={form.date}
@@ -168,17 +168,17 @@ export default function TransactionForm({ onCreated }) {
         />
       </div>
       <div className="form-control md:col-span-2">
-        <label className="label">Description</label>
-        <input name="description" className="input input-bordered" value={form.description} onChange={handleChange} placeholder="Optional" />
+        <label className="label text-xs xs:text-sm">Description</label>
+        <input name="description" className="input input-bordered input-xs xs:input-sm text-xs xs:text-sm" value={form.description} onChange={handleChange} placeholder="Optional" />
       </div>
-      {error && <div className="md:col-span-6 alert alert-error text-sm">{error}</div>}
+      {error && <div className="md:col-span-6 alert alert-error text-xs xs:text-sm">{error}</div>}
       <div className="md:col-span-6">
-        <div className="flex gap-2">
-          <button type="button" className="btn" disabled={aiLoading} onClick={handleReceiptClick}>
+        <div className="flex flex-col xs:flex-row gap-2">
+          <button type="button" className="btn btn-xs xs:btn-sm sm:btn-md w-full xs:w-auto text-xs xs:text-sm" disabled={aiLoading} onClick={handleReceiptClick}>
             {aiLoading ? 'Analyzing...' : 'Upload Receipt (PDF/Image)'}
           </button>
           <input ref={fileRef} type="file" accept="application/pdf,image/*" className="hidden" onChange={onFileSelected} />
-          <button className="btn btn-secondary" disabled={loading}>
+          <button className="btn btn-secondary btn-xs xs:btn-sm sm:btn-md w-full xs:w-auto text-xs xs:text-sm" disabled={loading}>
             {loading ? 'Saving...' : 'Add Transaction'}
           </button>
         </div>
@@ -186,33 +186,33 @@ export default function TransactionForm({ onCreated }) {
 
       {items.length > 0 && (
         <div className="md:col-span-6">
-          <div className="divider">Items found in receipt</div>
+          <div className="divider text-xs xs:text-sm">Items found in receipt</div>
           <div className="overflow-x-auto">
-            <table className="table">
+            <table className="table table-zebra table-xs xs:table-sm md:table-md text-xs xs:text-sm">
               <thead>
                 <tr>
-                  <th>Include</th>
-                  <th>Date</th>
-                  <th>Description</th>
-                  <th>Category</th>
-                  <th className="text-right">Amount</th>
+                  <th className="text-xs xs:text-sm">Include</th>
+                  <th className="text-xs xs:text-sm">Date</th>
+                  <th className="text-xs xs:text-sm">Description</th>
+                  <th className="text-xs xs:text-sm">Category</th>
+                  <th className="text-right text-xs xs:text-sm">Amount</th>
                 </tr>
               </thead>
               <tbody>
                 {items.map((it, idx) => (
                   <tr key={idx}>
                     <td>
-                      <input type="checkbox" className="checkbox" checked={it.include} onChange={(e) => setItems((arr) => arr.map((x, i) => i === idx ? { ...x, include: e.target.checked } : x))} />
+                      <input type="checkbox" className="checkbox checkbox-xs xs:checkbox-sm" checked={it.include} onChange={(e) => setItems((arr) => arr.map((x, i) => i === idx ? { ...x, include: e.target.checked } : x))} />
                     </td>
                     <td>
-                      <input type="date" className="input input-bordered input-sm" value={it.date} onChange={(e) => setItems((arr) => arr.map((x, i) => i === idx ? { ...x, date: e.target.value } : x))} />
+                      <input type="date" className="input input-bordered input-xs xs:input-sm text-xs xs:text-sm" value={it.date} onChange={(e) => setItems((arr) => arr.map((x, i) => i === idx ? { ...x, date: e.target.value } : x))} />
                     </td>
                     <td>
-                      <input type="text" className="input input-bordered input-sm w-full" value={it.description} onChange={(e) => setItems((arr) => arr.map((x, i) => i === idx ? { ...x, description: e.target.value } : x))} />
+                      <input type="text" className="input input-bordered input-xs xs:input-sm w-full text-xs xs:text-sm" value={it.description} onChange={(e) => setItems((arr) => arr.map((x, i) => i === idx ? { ...x, description: e.target.value } : x))} />
                     </td>
                     <td>
                       <select
-                        className={`select select-bordered select-sm ${it.category ? '' : 'select-warning'}`}
+                        className={`select select-bordered select-xs xs:select-sm text-xs xs:text-sm ${it.category ? '' : 'select-warning'}`}
                         value={it.category}
                         onChange={(e) => setItems((arr) => arr.map((x, i) => i === idx ? { ...x, category: e.target.value } : x))}
                       >
@@ -223,12 +223,12 @@ export default function TransactionForm({ onCreated }) {
                       </select>
                     </td>
                     <td className="text-right">
-                      ₹
+                      <span className="text-xs xs:text-sm">₹</span>
                       <input
                         type="number"
                         min="0"
                         step="0.01"
-                        className="input input-bordered input-sm w-28 text-right"
+                        className="input input-bordered input-xs xs:input-sm w-20 xs:w-24 md:w-28 text-right text-xs xs:text-sm"
                         value={it.amount}
                         onChange={(e) => setItems((arr) => arr.map((x, i) => i === idx ? { ...x, amount: e.target.value } : x))}
                       />
@@ -238,9 +238,9 @@ export default function TransactionForm({ onCreated }) {
               </tbody>
             </table>
           </div>
-          <div className="mt-3 flex gap-2">
-            <button type="button" className="btn" onClick={() => { setItems([]); setPendingCategoryFromReceipt(false); }}>Clear Items</button>
-            <button type="button" className="btn btn-primary" onClick={async () => {
+          <div className="mt-3 flex flex-col xs:flex-row gap-2">
+            <button type="button" className="btn btn-xs xs:btn-sm sm:btn-md w-full xs:w-auto text-xs xs:text-sm" onClick={() => { setItems([]); setPendingCategoryFromReceipt(false); }}>Clear Items</button>
+            <button type="button" className="btn btn-primary btn-xs xs:btn-sm sm:btn-md w-full xs:w-auto text-xs xs:text-sm" onClick={async () => {
               setLoading(true);
               setError('');
               const selected = items.filter((x) => x.include);

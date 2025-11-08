@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from '../store/slices/authSlice';
 import { setStart, setEnd, clearFilters } from '../store/slices/uiSlice';
-import { me, logout } from '../services/auth';
+import { me } from '../services/auth';
 import Dashboard from '../components/Dashboard';
 import TransactionForm from '../components/TransactionForm';
 
@@ -14,18 +14,16 @@ export default function DashboardPage() {
   const user = useSelector((s) => s.auth.user);
   const { start, end } = useSelector((s) => s.ui.filters);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const [refreshToken, setRefreshToken] = useState(0);
 
   useEffect(() => {
     let ignore = false;
     (async () => {
       setLoading(true);
-      setError('');
       try {
         const u = await me();
         if (!ignore) dispatch(setUser(u));
-      } catch (err) {
+      } catch {
         if (!ignore) navigate('/login');
       } finally {
         if (!ignore) setLoading(false);
@@ -45,11 +43,6 @@ export default function DashboardPage() {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }, [location]);
-
-  const handleLogout = async () => {
-    await logout();
-    navigate('/login');
-  };
 
   const formatToday = () => {
     const d = new Date();
@@ -89,42 +82,41 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
         <div>
-          <h1 className="text-2xl font-bold">Welcome, {user.name}</h1>
-          <p className="text-sm text-base-content/70">Track your finances and stay organized.</p>
+          <h1 className="text-xl xs:text-2xl font-bold">Welcome, {user.name}</h1>
+          <p className="text-xs xs:text-sm text-base-content/70">Track your finances and stay organized.</p>
         </div>
-        <button onClick={handleLogout} className="btn btn-outline btn-sm">Logout</button>
       </div>
 
       {/* Add Transaction first */}
       <div id="add" className="card bg-base-100 shadow scroll-mt-24">
-        <div className="card-body">
-          <h2 className="card-title">Add Transaction</h2>
+        <div className="card-body p-3 xs:p-4 sm:p-6">
+          <h2 className="card-title text-base xs:text-lg sm:text-xl">Add Transaction</h2>
           <TransactionForm onCreated={onTransactionCreated} />
         </div>
       </div>
 
       {/* Then filter by date range */}
       <div id="filter" className="card bg-base-100 shadow scroll-mt-24">
-        <div className="card-body">
-          <h3 className="card-title">Filter by Date Range</h3>
+        <div className="card-body p-3 xs:p-4 sm:p-6">
+          <h3 className="card-title text-base xs:text-lg sm:text-xl">Filter by Date Range</h3>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
             <div className="form-control">
-              <label className="label">Start</label>
+              <label className="label text-xs xs:text-sm">Start</label>
               <input
                 type="date"
-                className="input input-bordered"
+                className="input input-bordered input-sm xs:input-md"
                 value={start}
                 max={today}
                 onChange={(e) => handleStartChange(e.target.value)}
               />
             </div>
             <div className="form-control">
-              <label className="label">End</label>
+              <label className="label text-xs xs:text-sm">End</label>
               <input
                 type="date"
-                className="input input-bordered"
+                className="input input-bordered input-sm xs:input-md"
                 value={end}
                 min={start || undefined}
                 max={today}
@@ -132,7 +124,7 @@ export default function DashboardPage() {
               />
             </div>
             <div className="form-control md:col-span-2 flex-row items-end">
-              <button className="btn btn-ghost" onClick={() => dispatch(clearFilters())}>Clear</button>
+              <button className="btn btn-ghost btn-sm xs:btn-md text-xs xs:text-sm" onClick={() => dispatch(clearFilters())}>Clear</button>
             </div>
           </div>
         </div>

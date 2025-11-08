@@ -33,23 +33,23 @@ export default function AuthForm({ mode = 'login', onSuccess }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-3 xs:space-y-4">
       {isRegister && (
         <div className="form-control">
-          <label className="label">Name</label>
-          <input name="name" className="input input-bordered" required value={form.name} onChange={handleChange} />
+          <label className="label text-xs xs:text-sm">Name</label>
+          <input name="name" className="input input-bordered input-sm xs:input-md text-xs xs:text-sm" required value={form.name} onChange={handleChange} />
         </div>
       )}
       <div className="form-control">
-        <label className="label">Email</label>
-        <input name="email" type="email" className="input input-bordered" required value={form.email} onChange={handleChange} />
+        <label className="label text-xs xs:text-sm">Email</label>
+        <input name="email" type="email" className="input input-bordered input-sm xs:input-md text-xs xs:text-sm" required value={form.email} onChange={handleChange} />
       </div>
       <div className="form-control">
-        <label className="label">Password</label>
-        <input name="password" type="password" className="input input-bordered" required value={form.password} onChange={handleChange} />
+        <label className="label text-xs xs:text-sm">Password</label>
+        <input name="password" type="password" className="input input-bordered input-sm xs:input-md text-xs xs:text-sm" required value={form.password} onChange={handleChange} />
       </div>
-      {error && <div className="alert alert-error text-sm">{error}</div>}
-      <button className={`btn btn-primary w-full`} disabled={loading}>
+      {error && <div className="alert alert-error text-xs xs:text-sm">{error}</div>}
+      <button className={`btn btn-primary btn-sm xs:btn-md w-full text-xs xs:text-sm`} disabled={loading}>
         {loading ? 'Please wait...' : isRegister ? 'Create Account' : 'Login'}
       </button>
     </form>

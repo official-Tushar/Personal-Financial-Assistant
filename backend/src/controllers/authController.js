@@ -63,11 +63,14 @@ export async function login(req, res, next) {
 export async function logout(req, res, next) {
   try {
     const isSecure = String(process.env.COOKIE_SECURE).toLowerCase() === 'true' || process.env.NODE_ENV === 'production';
-    res.cookie('token', '', {
+    const sameSite = isSecure ? 'None' : 'Lax';
+    // Ensure we clear the cookie with the exact same attributes used to set it
+    res.clearCookie('token', {
       httpOnly: true,
-      sameSite: 'None',
+      sameSite,
       secure: isSecure,
       expires: new Date(0),
+      path: '/',
     });
     return res.json({ message: 'Logged out' });
   } catch (err) {

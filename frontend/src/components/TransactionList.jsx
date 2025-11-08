@@ -57,7 +57,7 @@ export default function TransactionList({ start, end, refreshToken }) {
   }, [start, end, refreshToken, localRefresh, page, limit]);
 
   if (loading) return <div className="loading loading-spinner" />;
-  if (error) return <div className="alert alert-error text-sm">{error}</div>;
+  if (error) return <div className="alert alert-error text-xs xs:text-sm">{error}</div>;
 
   const openEdit = (tx) => {
     setEditForm({
@@ -113,59 +113,59 @@ export default function TransactionList({ start, end, refreshToken }) {
 
   return (
     <div className="overflow-x-auto">
-      <table className="table">
+      <table className="table table-zebra table-xs xs:table-sm md:table-md text-xs xs:text-sm">
         <thead>
           <tr>
-            <th>Date</th>
-            <th>Type</th>
-            <th>Category</th>
-            <th className="text-right">Amount</th>
-            <th>Description</th>
-            <th>Actions</th>
+            <th className="text-xs xs:text-sm">Date</th>
+            <th className="text-xs xs:text-sm">Type</th>
+            <th className="text-xs xs:text-sm">Category</th>
+            <th className="text-right text-xs xs:text-sm">Amount</th>
+            <th className="text-xs xs:text-sm">Description</th>
+            <th className="text-xs xs:text-sm">Actions</th>
           </tr>
         </thead>
         <tbody>
           {items.map((tx) => (
             <tr key={tx._id}>
-              <td>{new Date(tx.date).toLocaleDateString()}</td>
+              <td className="text-xs xs:text-sm">{new Date(tx.date).toLocaleDateString()}</td>
               <td>
-                <span className={`badge ${tx.type === 'income' ? 'badge-success' : 'badge-error'} badge-outline`}>{tx.type}</span>
+                <span className={`badge ${tx.type === 'income' ? 'badge-success' : 'badge-error'} badge-outline badge-xs xs:badge-sm`}>{tx.type}</span>
               </td>
-              <td>{tx.category}</td>
-              <td className={`text-right ${tx.type === 'income' ? 'text-success' : 'text-error'}`}>₹{tx.amount.toFixed(2)}</td>
-              <td>{tx.description}</td>
-              <td className="space-x-2 whitespace-nowrap">
-                <button className="btn btn-xs" onClick={() => openEdit(tx)}>Edit</button>
-                <button className="btn btn-xs btn-error" onClick={() => onDelete(tx._id)}>Delete</button>
+              <td className="text-xs xs:text-sm">{tx.category}</td>
+              <td className={`text-right text-xs xs:text-sm ${tx.type === 'income' ? 'text-success' : 'text-error'}`}>₹{tx.amount.toFixed(2)}</td>
+              <td className="max-w-[8rem] xs:max-w-[12rem] md:max-w-none truncate text-xs xs:text-sm" title={tx.description}>{tx.description}</td>
+              <td className="space-x-1 xs:space-x-2 whitespace-nowrap">
+                <button className="btn btn-ghost btn-xs text-xs" onClick={() => openEdit(tx)}>Edit</button>
+                <button className="btn btn-error btn-xs text-xs" onClick={() => onDelete(tx._id)}>Delete</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      <div className="flex items-center justify-between mt-4">
-        <div className="text-sm opacity-70">Page {meta.page} of {meta.totalPages} • {meta.total} total</div>
-        <div className="join">
-          <button className="btn join-item" disabled={!meta.hasPrev} onClick={() => dispatch(prevPage())}>Previous</button>
-          <button className="btn join-item" disabled={!meta.hasNext} onClick={() => dispatch(nextPage())}>Next</button>
+      <div className="flex flex-col xs:flex-row gap-2 xs:gap-0 items-stretch xs:items-center justify-between mt-4">
+        <div className="text-xs xs:text-sm opacity-70">Page {meta.page} of {meta.totalPages} • {meta.total} total</div>
+        <div className="join self-end xs:self-auto">
+          <button className="btn btn-xs xs:btn-sm join-item text-xs xs:text-sm" disabled={!meta.hasPrev} onClick={() => dispatch(prevPage())}>Previous</button>
+          <button className="btn btn-xs xs:btn-sm join-item text-xs xs:text-sm" disabled={!meta.hasNext} onClick={() => dispatch(nextPage())}>Next</button>
         </div>
       </div>
 
       {editOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 xs:p-3">
           <div className="card bg-base-100 shadow max-w-lg w-full">
-            <div className="card-body">
-              <h3 className="card-title">Edit Transaction</h3>
-              <form onSubmit={saveEdit} className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end">
+            <div className="card-body p-3 xs:p-4 sm:p-6">
+              <h3 className="card-title text-sm xs:text-base sm:text-lg">Edit Transaction</h3>
+              <form onSubmit={saveEdit} className="grid grid-cols-1 md:grid-cols-6 gap-3 xs:gap-4 items-end">
                 <div className="form-control md:col-span-2">
-                  <label className="label">Type</label>
-                  <select name="type" className="select select-bordered" value={editForm.type} onChange={handleEditChange}>
+                  <label className="label text-xs xs:text-sm">Type</label>
+                  <select name="type" className="select select-bordered select-xs xs:select-sm md:select-md text-xs xs:text-sm" value={editForm.type} onChange={handleEditChange}>
                     <option value="income">Income</option>
                     <option value="expense">Expense</option>
                   </select>
                 </div>
                 <div className="form-control md:col-span-2">
-                  <label className="label">Category</label>
-                  <select name="category" className="select select-bordered" required value={editForm.category} onChange={handleEditChange}>
+                  <label className="label text-xs xs:text-sm">Category</label>
+                  <select name="category" className="select select-bordered select-xs xs:select-sm md:select-md text-xs xs:text-sm" required value={editForm.category} onChange={handleEditChange}>
                     <option value="" disabled>Select a category</option>
                     {allowedEditCategories.map((c) => (
                       <option key={c} value={c}>{c}</option>
@@ -173,21 +173,21 @@ export default function TransactionList({ start, end, refreshToken }) {
                   </select>
                 </div>
                 <div className="form-control md:col-span-2">
-                  <label className="label">Amount</label>
-                  <input name="amount" type="number" min="0" step="0.01" className="input input-bordered" required value={editForm.amount} onChange={handleEditChange} />
+                  <label className="label text-xs xs:text-sm">Amount</label>
+                  <input name="amount" type="number" min="0" step="0.01" className="input input-bordered input-xs xs:input-sm md:input-md text-xs xs:text-sm" required value={editForm.amount} onChange={handleEditChange} />
                 </div>
                 <div className="form-control md:col-span-3">
-                  <label className="label">Date</label>
-                  <input name="date" type="date" className="input input-bordered" required value={editForm.date} onChange={handleEditChange} />
+                  <label className="label text-xs xs:text-sm">Date</label>
+                  <input name="date" type="date" className="input input-bordered input-xs xs:input-sm md:input-md text-xs xs:text-sm" required value={editForm.date} onChange={handleEditChange} />
                 </div>
                 <div className="form-control md:col-span-3">
-                  <label className="label">Description</label>
-                  <input name="description" className="input input-bordered" value={editForm.description} onChange={handleEditChange} />
+                  <label className="label text-xs xs:text-sm">Description</label>
+                  <input name="description" className="input input-bordered input-xs xs:input-sm md:input-md text-xs xs:text-sm" value={editForm.description} onChange={handleEditChange} />
                 </div>
-                {editError && <div className="md:col-span-6 alert alert-error text-sm">{editError}</div>}
+                {editError && <div className="md:col-span-6 alert alert-error text-xs xs:text-sm">{editError}</div>}
                 <div className="md:col-span-6 flex gap-2 justify-end">
-                  <button type="button" className="btn" onClick={closeEdit}>Cancel</button>
-                  <button className="btn btn-primary" disabled={editSaving}>{editSaving ? 'Saving...' : 'Save'}</button>
+                  <button type="button" className="btn btn-xs xs:btn-sm md:btn-md text-xs xs:text-sm" onClick={closeEdit}>Cancel</button>
+                  <button className="btn btn-primary btn-xs xs:btn-sm md:btn-md text-xs xs:text-sm" disabled={editSaving}>{editSaving ? 'Saving...' : 'Save'}</button>
                 </div>
               </form>
             </div>

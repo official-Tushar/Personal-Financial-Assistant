@@ -16,9 +16,10 @@ export function authRequired(req, res, next) {
 
 export function setAuthCookie(res, token) {
   const isSecure = String(process.env.COOKIE_SECURE).toLowerCase() === 'true' || process.env.NODE_ENV === 'production';
+  const sameSite = isSecure ? 'None' : 'Lax';
   res.cookie('token', token, {
     httpOnly: true,
-    sameSite: 'None',
+    sameSite,
     secure: isSecure,
     maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
   });
